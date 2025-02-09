@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
+import { useToast } from '@/hooks/use-toast';
 
 const Register = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -27,8 +29,11 @@ const Register = ({ setIsAuthenticated }) => {
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
         setIsAuthenticated(true);
-        navigate('/dashboard');
-      } else {
+        toast({ title: "Registration Successful", description: "Welcome! to AI Notes...", className: "bg-green-500 text-white border-success" });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 3000);
+      } else{
         alert(data.error || "Registration failed");
       }
     } catch (error) {
