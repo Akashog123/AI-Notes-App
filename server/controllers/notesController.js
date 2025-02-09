@@ -154,18 +154,23 @@ const deleteNote = async (req, res) => {
 };
 
 const fileuploads = async (req, res) => {
+  console.log("Checkpoint backend: fileuploads endpoint hit");
   try {
-    console.log("fileuploads: Received file:", req.file, "Type:", req.params.type);
+    console.log("Checkpoint backend: fileuploads invoked. Params type:", req.params.type);
+    console.log("Checkpoint backend: Received file details:", req.file && {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
     if (!req.file) {
-      console.error("fileuploads: No file provided");
+      console.error("Checkpoint backend: No file provided");
       return res.status(400).json({ error: 'No file provided' });
     }
     const db = mongoose.connection.db;
-    const bucket = new GridFSBucket(
-      db, 
-      { bucketName: req.params.type === 'image' ? 'images' : 'audios' }
-    );
+    const bucketName = req.params.type === 'image' ? 'images' : 'audios';
+    const bucket = new GridFSBucket(db, { bucketName });
     
+    console.log(`Checkpoint backend: Starting upload into bucket '${bucketName}' for file:`, req.file.originalname);
     const uploadStream = bucket.openUploadStream(req.file.originalname, {
       metadata: { userId: req.user.id, contentType: req.file.mimetype }
     });
@@ -173,11 +178,11 @@ const fileuploads = async (req, res) => {
     uploadStream.end(req.file.buffer);
     
     uploadStream.on('finish', () => {
-      console.log("fileuploads: Finished uploading file with id", uploadStream.id);
+      console.log("Checkpoint backend: Finished uploading file with id", uploadStream.id);
       res.status(201).json({ fileId: uploadStream.id.toString(), filename: req.file.originalname });
     });
   } catch (error) {
-    console.error("fileuploads: Error during file upload:", error);
+    console.error("Checkpoint backend: Error during file upload:", error);
     res.status(500).json({ error: 'Upload failed' });
   }
 }

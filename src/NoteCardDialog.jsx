@@ -19,28 +19,43 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
   const [previewAudioUrl, setPreviewAudioUrl] = useState(null);
   const [savedImages, setSavedImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [localImages, setLocalImages] = useState(note.images || []);
   const imageInputRef = useRef(null);
 
   const getAuthHeader = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
   const uploadImage = async (file) => {
+    console.log("Checkpoint frontend: Starting upload for file:", file.name);
     const formData = new FormData();
     formData.append('file', file);
-    const response = await axios.post(`/api/notes/upload/image`, formData, {
-      headers: {
-        ...getAuthHeader(),
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    return response.data.fileId;
+    try {
+      const response = await axios.post(`/api/notes/upload/image`, formData, {
+        headers: { 
+          ...getAuthHeader(),
+          'Content-Type': 'multipart/form-data' 
+        }
+      });
+      console.log("Uploaded image file, received fileId:", response.data.fileId);
+      return response.data.fileId;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
   };
 
   const handleSave = async () => {
+    console.log("Starting handleSave. Uploaded images:", uploadedImages);
+    if (uploadedImages.length === 0) {
+      console.log("No files queued for upload.");
+    }
     let newImageIds = [];
     if (uploadedImages.length > 0) {
       newImageIds = await Promise.all(uploadedImages.map(uploadImage));
+      console.log("New image IDs:", newImageIds);
     }
-    const updatedImages = note.images ? [...note.images, ...newImageIds] : newImageIds;
+    const updatedImages = [...localImages, ...newImageIds];
+    console.log("Updated images list:", updatedImages);
+    setLocalImages(updatedImages);
     onUpdate({ ...note, title: newTitle, content: newContent, images: updatedImages });
     setIsEditing(false);
     setUploadedImages([]);
@@ -52,10 +67,22 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
     onUpdate({ ...note, isFavourite: updatedFavouriteStatus });
   };
 
-  const handleImageSelect = (e) => {
+  const handleImageSelect = async (e) => {
     const file = e.target.files[0];
-    if (file && (savedImages.length + uploadedImages.length) < 2) {
-      setUploadedImages([...uploadedImages, file]);
+    console.log("Selected file:", file);
+    console.log("Current image counts: localImages=", localImages.length, "uploadedImages=", uploadedImages.length);
+    if (file && ((localImages.length + uploadedImages.length) < 2)) {
+      console.log("Auto-uploading file on selection");
+      try {
+        const fileId = await uploadImage(file);
+        const updatedImages = [...localImages, fileId];
+        setLocalImages(updatedImages);
+        onUpdate({ ...note, images: updatedImages });
+      } catch (error) {
+        console.error("Auto-upload failed:", error);
+      }
+    } else {
+      console.log("Not adding file due to count condition");
     }
   };
 
@@ -64,17 +91,23 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
   };
 
   const handleRemoveSavedImage = (id) => {
-    const updatedImageIds = note.images.filter(imgId => imgId !== id);
+    console.log("Removing saved image with id:", id);
+    const updatedImageIds = localImages.filter(imgId => imgId !== id);
+    setLocalImages(updatedImageIds);
     onUpdate({ ...note, images: updatedImageIds });
     setSavedImages(savedImages.filter(img => img.id !== id));
   };
 
   useEffect(() => {
+    setLocalImages(note.images || []);
+  }, [note]);
+
+  useEffect(() => {
     const fetchSavedImages = async () => {
-      const imageIds = Array.isArray(note.images)
-        ? note.images
-        : note.images
-          ? [note.images]
+      const imageIds = Array.isArray(localImages)
+        ? localImages
+        : localImages
+          ? [localImages]
           : [];
       if (imageIds.length) {
         setSavedImages([]);
@@ -95,7 +128,7 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
     return () => {
       savedImages.forEach(img => URL.revokeObjectURL(img.url));
     };
-  }, [note]);
+  }, [localImages]);
 
   useEffect(() => {
 // Cleanup previous blob URLs when preview type changes
@@ -126,7 +159,7 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`p-6 bg-rose-50 shadow-lg ${fullScreen ? 'w-screen h-screen m-0 rounded-none max-w-none' : 'rounded-lg sm:max-w-[425px]'}`}>
+      <DialogContent className={`p-6 bg-fuchsia-50 shadow-lg ${fullScreen ? 'w-screen h-screen m-0 rounded-none max-w-none' : 'rounded-lg sm:max-w-[425px]'}`}>
         <DialogHeader>
           <div className="flex justify-end items-center mb-2">
             <button 
@@ -249,7 +282,6 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
         )}
         {/* Multi-image upload section */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium mb-2">Images</h3>
           <div className="grid grid-cols-2 gap-4">
             {savedImages.map((img, idx) => (
               <Card key={`saved-${idx}`} className="relative">
@@ -263,9 +295,8 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
                   </AspectRatio>
                 </CardContent>
                 <Button
-                  variant="destructive"
                   size="icon"
-                  className="absolute top-1 right-1 p-1"
+                  className="text-rose-500 absolute top-1 right-1 p-1"
                   onClick={() => handleRemoveSavedImage(img.id)}
                   title="Remove image"
                 >
@@ -273,33 +304,16 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
                 </Button>
               </Card>
             ))}
-            {uploadedImages.map((file, idx) => (
-              <Card key={`uploaded-${idx}`} className="relative">
-                <CardContent className="p-0">
-                  <AspectRatio ratio={16/9}>
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Upload ${idx + 1}`}
-                      className="object-cover w-full h-full"
-                    />
-                  </AspectRatio>
-                </CardContent>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-1 right-1 p-1"
-                  onClick={() => handleRemoveImage(idx)}
-                  title="Remove image"
+            { ((localImages.length + uploadedImages.length) < 2) && (
+              <AspectRatio ratio={16/9}>
+                <div 
+                  className="flex flex-col items-center justify-center border-dashed border-2 border-gray-300 rounded-md cursor-pointer h-full w-full"
+                  onClick={()=> imageInputRef.current && imageInputRef.current.click()}
                 >
-                  <Trash2 size={16} />
-                </Button>
-              </Card>
-            ))}
-            { ( (savedImages.length + uploadedImages.length) < 2 ) && (
-              <div className="flex items-center justify-center border-dashed border-2 border-gray-300 rounded-md cursor-pointer"
-                onClick={()=> imageInputRef.current && imageInputRef.current.click()}>
-                <Plus size={24} className="text-gray-500" />
-              </div>
+                  <Plus size={24} className="text-gray-500" />
+                  <span className="text-gray-500 mt-1">Image</span>
+                </div>
+              </AspectRatio>
             )}
           </div>
           <input
@@ -309,25 +323,6 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
             className="hidden"
             onChange={handleImageSelect}
           />
-        </div>
-        {/* Updated image handling section */}
-        <div className="mt-4">
-          <h3 className="font-medium">Images</h3>
-          { Array.isArray(note.images) && note.images.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {note.images.map((imageId, index) => (
-                  <img
-                    key={index}
-                    src={`/api/notes/file/${imageId}`}
-                    alt={`Note image ${index}`}
-                    className="w-20 h-20 object-cover rounded"
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">No images available</p>
-            )
-          }
         </div>
       </DialogContent>
     </Dialog>

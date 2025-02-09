@@ -5,18 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import NoteCreatorDialog from './NoteCreatorDialog';
 import NoteCardDialog from './NoteCardDialog';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Toaster } from "@/components/ui/toaster";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -213,20 +205,22 @@ export default function Dashboard() {
     <div className="flex h-screen">
       <Toaster className="bg-rose-50" />
       {/* Sidebar */}
-      <div className="w-64 bg-[#F7F6FA] p-4 flex flex-col justify-between">
+      <div className="w-64 bg-[#F7F6FA] p-4 flex flex-col justify-between rounded-lg shadow-lg">
         <div>
           <h1 className="text-xl font-semibold flex items-center space-x-2">
-            <span className="bg-rose-500 hover:bg-rose-600 p-2 rounded-full text-white">AI</span>
-            <span>Notes</span>
+            <span className="bg-fuchsia-700 hover:bg-fuchsia-800 p-2 rounded-lg text-white flex items-center justify-center w-8 h-8">
+               ~ 
+            </span>
+            <span>AI Notes</span>
           </h1>
           <nav className="mt-6">
             <button onClick={() => setShowFavourites(false)}
-              className={`flex items-center space-x-2 p-2 rounded-lg w-full ${!showFavourites ? "bg-purple-100" : ""}`}>
+              className={`flex items-center space-x-2 p-2 rounded-lg w-full ${!showFavourites ? "bg-rose-100" : ""}`}>
               <Home size={18} />
               <span>Home</span>
             </button>
             <button onClick={() => setShowFavourites(true)}
-              className={`flex items-center space-x-2 p-2 mt-2 w-full ${showFavourites ? "bg-purple-100" : ""}`}>
+              className={`flex items-center space-x-2 p-2 mt-2 w-full ${showFavourites ? "bg-rose-100" : ""}`}>
               <Star size={18} />
               <span>Favourites</span>
             </button>
@@ -263,59 +257,63 @@ export default function Dashboard() {
         </div>
         
         {/* Notes */}
-        <div className="mt-6 grid grid-cols-2 gap-4">
-          {notesToDisplay.map((note) => (
-            <Card key={note._id} className="p-3 bg-rose-50 relative" onClick={()=>handleCardClick(note)}>
-              {/* Icons at bottom left if audio or image available */}
-              <div className="absolute bottom-2 left-2 flex flex-row space-x-1">
-                {note.audio && <Play size={14} className="text-gray-500"/>}
-                {Array.isArray(note.images) && note.images.length > 0 && <Image size={14} className="text-gray-500" />}
-              </div>
-              {/* Dropdown menu at top right */}
-              <div className="absolute top-2 right-2" onClick={(e)=>e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button title="Actions Menu" className="text-gray-500">
-                      <EllipsisVertical size={16} />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-zinc-50">
-                    {/* RenameTitle menu item */}
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); handleRenameNote(note); }} 
-                      className="flex items-center">
-                      Rename
-                      <NotebookPen size={10} className="text-gray-500 ml-1" />
-                    </DropdownMenuItem>
-                    {/* Delete option */}
-                    <DropdownMenuItem 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setNoteToDelete(note);
-                      }} 
-                      className="flex items-center">
-                      Delete
-                      <Trash2 size={10} className="text-gray-500" />
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <CardContent>
-                <p className="text-[10px] text-gray-500">{formatDateTime(note.savedAt)}</p>
-                <h2 className="font-semibold">{note.title}</h2>
-                <p className="text-xs text-gray-700">{note.content}</p>
-              </CardContent>
-              {/* Copy to clipboard button */}
-              <div className="absolute bottom-1 right-2" onClick={(e)=>e.stopPropagation()}>
-                <button 
-                  onClick={() => navigator.clipboard.writeText(note.content)}
-                  title="Copy note content">
-                  <Copy size={14} className="text-gray-500" />
-                </button>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <ScrollArea className="mt-6 h-[80vh]">
+          <div className="grid grid-cols-4 gap-4">
+            {notesToDisplay.map((note) => (
+              <Card key={note._id} className="p-2 bg-rose-50 relative h-40" onClick={()=>handleCardClick(note)}>
+                {/* Icons at bottom left if audio or image available */}
+                <div className="absolute bottom-2 left-2 flex flex-row space-x-2">
+                  {note.audio && <Play size={14} className="text-gray-500"/>}
+                  {Array.isArray(note.images) && note.images.length > 0 && <Image size={14} className="text-gray-500" />}
+                </div>
+                {/* Dropdown menu at top right */}
+                <div className="absolute top-2 right-1" onClick={(e)=>e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button title="Actions Menu" className="text-gray-500">
+                        <EllipsisVertical size={16} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-zinc-50">
+                      {/* RenameTitle option */}
+                      <DropdownMenuItem 
+                        onClick={(e) => { e.stopPropagation(); handleRenameNote(note); }} 
+                        className="flex items-center">
+                        Rename
+                        <NotebookPen size={10} className="text-gray-500 ml-1" />
+                      </DropdownMenuItem>
+                      {/* Delete option */}
+                      <DropdownMenuItem 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          setNoteToDelete(note);
+                        }} 
+                        className="flex items-center">
+                        Delete
+                        <Trash2 size={10} className="text-gray-500" />
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <CardContent>
+                  <p className="text-[10px] text-gray-500">{formatDateTime(note.savedAt)}</p>
+                  {/* Updated title with truncation */}
+                  <h2 className="font-semibold truncate">{note.title}</h2>
+                  {/* Updated content with multi-line truncation */}
+                  <p className="text-xs text-gray-700 line-clamp-5">{note.content}</p>
+                </CardContent>
+                {/* Copy to clipboard button */}
+                <div className="absolute bottom-1 right-2" onClick={(e)=>e.stopPropagation()}>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText(note.content)}
+                    title="Copy note content">
+                    <Copy size={14} className="text-gray-500" />
+                  </button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
       
       {/* Note Create Button */}

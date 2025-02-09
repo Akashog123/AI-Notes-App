@@ -266,14 +266,9 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
           className="mb-3 border border-gray-300 p-2 rounded-md bg-gray-100 h-20"
         />
         <div className="flex items-center gap-2 mb-3">
-          {/* <label
-            htmlFor="image-upload"
-            className="w-12 h-12 flex items-center justify-center border border-dashed border-gray-300 rounded-md hover:bg-gray-100 cursor-pointer"
-          >
-            <ImagePlus size={26} className="text-gray-500" />
-          </label> */}
-          <Button onClick={handleRecordToggle} disabled={recordTime >= 60 || isRecorded} hidden={recordTime >= 60 || isRecorded} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
-            {recording ? (isPaused ? <Play size={16} /> : <Pause size={16} />) : <Mic size={16} />}
+          <Button onClick={handleRecordToggle} disabled={recordTime >= 60 || isRecorded} hidden={recordTime >= 60 || isRecorded} className="bg-rose-600 hover:bg-rose-800 text-white px-4 py-2 rounded-md">
+            { recording ? (isPaused ? <Play size={16} /> : <Pause size={16} />) : <Mic size={16} />}
+            { !recording ? <span>Record</span>: ''}  
           </Button>
           {recording && <Button onClick={handleFinishRecording}>Finish<CheckCheck size={16} /></Button>}
           <Button onClick={handleSubmit} 
