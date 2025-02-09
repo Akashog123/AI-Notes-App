@@ -1,6 +1,9 @@
 /* Auth wrapper styles */
 .auth {
-  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+  background: linear-gradient(to bottom right, 
+  #fff1f2,
+  #ffe4e6,
+  #fecdd3 );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +165,11 @@
 }
 .toggle {
   height: 100%;
-  background: linear-gradient(to right, #ba5370, #f4e2d8);
+  background: linear-gradient(to bottom right,
+  #fecdd3, 
+  #ffe4e6,
+  #fff1f2);
+  box-shadow: 0 4px 6px -1px rgba(254, 205, 211, 0.1);
   color: #000000;
   position: relative;
   left: -100%;

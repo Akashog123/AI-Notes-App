@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [notes, setNotes] = useState([]);
   const [user, setUser] = useState(null);
-  const [isRecordingOpen, setIsRecordingOpen] = useState(false);
+  const [isNoteCreateOpen, setNoteCreateOpen] = useState(false);
   const [showFavourites, setShowFavourites] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedNote, setSelectedNote] = useState(null);
@@ -318,13 +318,13 @@ export default function Dashboard() {
       
       {/* Note Create Button */}
       <div className="absolute bottom-6 right-6">
-        <Button title='Create Note' className="bg-rose-600 hover:bg-rose-800 text-white flex items-center px-6 py-3 rounded-full" onClick={() => setIsRecordingOpen(true)}>
+        <Button title='Create Note' className="bg-rose-600 hover:bg-rose-800 text-white flex items-center px-6 py-3 rounded-full" onClick={() => setNoteCreateOpen(true)}>
           <span>Create Note</span><NotebookPen size={20} />
         </Button>
-        <NoteCreatorDialog isOpen={isRecordingOpen} onClose={() => setIsRecordingOpen(false)} onAddNote={addNote} />
+        <NoteCreatorDialog isOpen={isNoteCreateOpen} onClose={() => setNoteCreateOpen(false)} onAddNote={addNote} />
       </div>
 
-      {/* Note editing dialog */}
+      {/* Note Card dialog */}
       {selectedNote && (
         <NoteCardDialog 
           isOpen={isNoteDialogOpen} 

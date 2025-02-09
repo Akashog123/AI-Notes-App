@@ -5,7 +5,7 @@ A full-stack note-taking application that incorporates modern features and integ
 ## Features
 
 - **Authentication:**  
-  - Sign up and Login flows for secure access.
+  - Sign up and Login flows for secure access(using JWT).
   
 - **Dashboard:**  
   - Displays all user notes with search, filtering (by favourites), and sorting (newest/oldest).  
@@ -64,4 +64,4 @@ A full-stack note-taking application that incorporates modern features and integ
 
 Enjoy using AI Notes App!
 
-Note: Browser Web Speech API's SpeechRecognition has compatibilty issues with some browsers, this app works best in Microsoft Edge.
+Note: Browser Web Speech API's SpeechRecognition has compatibilty issues with some browsers which leads to not recording, this app works best in Microsoft Edge.

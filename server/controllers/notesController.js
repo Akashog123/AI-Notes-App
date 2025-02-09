@@ -96,7 +96,7 @@ const updateNote = async (req, res) => {
   }
 };
 
-// New: Update favourite status of a note
+// Update favourite status of a note
 const updateFavourite = async (req, res) => {
   try {
     const { id } = req.params;

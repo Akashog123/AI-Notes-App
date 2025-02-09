@@ -3,9 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mic, Play, Pause, CheckCheck, Save, ImagePlus, Loader2, Trash2, Plus } from 'lucide-react';
+import { Mic, Play, Pause, CheckCheck, Save, Loader2, Trash2, Plus } from 'lucide-react';
 import axios from 'axios';
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -283,7 +282,7 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
               ) : (
                 <>
                   Save
-                  <Save size={16} className="ml-2" />
+                  <Save size={16} />
                 </>
               )}
           </Button>

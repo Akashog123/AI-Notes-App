@@ -86,10 +86,6 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
     }
   };
 
-  const handleRemoveImage = (index) => {
-    setUploadedImages(uploadedImages.filter((_, i) => i !== index));
-  };
-
   const handleRemoveSavedImage = (id) => {
     console.log("Removing saved image with id:", id);
     const updatedImageIds = localImages.filter(imgId => imgId !== id);
