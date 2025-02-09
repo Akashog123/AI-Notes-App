@@ -63,3 +63,5 @@ A full-stack note-taking application that incorporates modern features and integ
 - Features speech recognition and live media preview functionalities.
 
 Enjoy using AI Notes App!
+
+Note: Browser Web Speech API's SpeechRecognition has compatibilty issues with some browsers, this app works best in Microsoft Edge.
