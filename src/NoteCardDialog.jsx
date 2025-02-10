@@ -167,13 +167,20 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`p-6 bg-fuchsia-50 shadow-lg ${fullScreen ? 'w-screen h-screen m-0 rounded-none max-w-none' : 'rounded-lg sm:max-w-[425px]'}`}>
+      <DialogContent className={`p-6 bg-rose-50 shadow-lg ${fullScreen ? 'w-screen h-screen m-0 rounded-none max-w-none' : 'rounded-lg sm:max-w-[425px]'}`}>
         <DialogHeader>
           <div className="flex justify-end items-center mb-2">
+          <button 
+              onClick={() => setFullScreen(!fullScreen)}
+              title={fullScreen ? "Minimize" : "Maximize"}
+              className="absolute top-0 left-0 bg-pink-50 text-slate-900 rounded-lg shadow-lg p-2"
+            >
+              {fullScreen ? <Minimize2 size={18}/> : <Maximize2 size={18}/>}
+            </button>
             <button 
               onClick={toggleFavourite}
               title="Toggle Favourite"
-              className={`absolute right-14 ${isFavourite ? 'text-yellow-500 fill-yellow-500' : 'text-slate-500'}`}
+              className={`absolute top-1 right-14 rounded-full bg-pink-50 shadow-md p-2 ${isFavourite ? 'text-yellow-500 fill-yellow-500' : 'text-slate-500'}`}
             >
               <Star size={18} />
             </button>
@@ -211,7 +218,7 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
                 <button 
                   onClick={() => setIsEditing(!isEditing)} 
                   title="Edit Title/Content" 
-                  className={`${isEditing ? 'text-slate-900' : 'text-slate-500'}`}
+                  className={`rounded-full bg-pink-50 shadow-md p-2 ml-2 ${isEditing ? 'text-slate-900' : 'text-slate-500'}`}
                 >
                   <PenLine size={18} />
                 </button>
@@ -223,25 +230,18 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
                       setTimeout(() => setActiveSave(false), 3000);
                     }}
                     title='Save changes' 
-                    className={`${activeSave ? '' : 'text-slate-900'}`}
+                    className={`rounded-full bg-pink-50 shadow-md p-2 ml-2 ${activeSave ? '' : 'text-slate-900'}`}
                   >
                     <Save size={18} />
                   </button>
                 )}
-                <button 
-                  onClick={() => setFullScreen(!fullScreen)} 
-                  title={fullScreen ? "Minimize" : "Maximize"} 
-                  className="text-slate-800"
-                >
-                  {fullScreen ? <Minimize2 size={18}/> : <Maximize2 size={18}/>}
-                </button>
               </div>
               <div className="flex space-x-2">
                 { note.audio && (
                   <button 
                     onClick={() => setPreviewType(previewType==='audio'? null:'audio')} 
                     title="Play audio" 
-                    className={`${previewType === 'audio' ? 'text-slate-900' : 'text-slate-500'}`}
+                    className={`rounded-full bg-pink-50 shadow-md p-2 ml-2 ${previewType === 'audio' ? 'text-slate-900' : 'text-slate-500'}`}
                   >
                     <Play size={18}/>
                   </button>
@@ -258,15 +258,6 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
               alt="Note Image" 
               className={fullScreen ? "max-w-[50vw] max-h-[50vh] object-contain" : "w-full rounded"}
             />
-            {!fullScreen && (
-              <button 
-                onClick={() => setPreviewType(null)} 
-                title='Close Image' 
-                className="absolute top-2 right-2 text-slate-500"
-              >
-                <X size={18} />
-              </button>
-            )}
           </div>
         )}
         {previewType === 'audio' && previewAudioUrl && (
