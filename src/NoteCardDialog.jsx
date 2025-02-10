@@ -272,7 +272,7 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
                   setActiveDownload(true);
                   setTimeout(() => setActiveDownload(false), 3000);
                 }}
-                className={`ml-2 ${activeDownload ? 'text-slate-900' : 'text-slate-500'}`}
+                className={`rounded-full bg-pink-50 shadow-md p-2 ml-2 ${activeDownload ? 'text-slate-900' : 'text-slate-500'}`}
               >
                 <ArrowDownToLine size={18} />
               </a>
