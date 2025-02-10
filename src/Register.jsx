@@ -29,12 +29,10 @@ const Register = ({ setIsAuthenticated }) => {
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
         setIsAuthenticated(true);
-        toast({ title: "Registration Successful", description: "Welcome! to AI Notes...", className: "bg-green-500 text-white border-success" });
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 3000);
+        toast({ title: "Registration Successful", description: "Welcome! to AI Notes...", className: "bg-green-600 text-white border-success" });
+        navigate('/dashboard');
       } else{
-        alert(data.error || "Registration failed");
+        toast({ title: "Something went wrong", description: "Please try again.", className: "bg-red-600 text-white border-success" });
       }
     } catch (error) {
       console.error(error);

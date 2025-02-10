@@ -56,7 +56,13 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
     const updatedImages = [...localImages, ...newImageIds];
     console.log("Updated images list:", updatedImages);
     setLocalImages(updatedImages);
-    onUpdate({ ...note, title: newTitle, content: newContent, images: updatedImages });
+    onUpdate({ 
+      ...note, 
+      title: newTitle, 
+      content: newContent, 
+      images: updatedImages, 
+      isFavourite 
+    });
     setIsEditing(false);
     setUploadedImages([]);
   };
@@ -64,7 +70,13 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
   const toggleFavourite = () => {
     const updatedFavouriteStatus = !isFavourite;
     setIsFavourite(updatedFavouriteStatus);
-    onUpdate({ ...note, isFavourite: updatedFavouriteStatus });
+    onUpdate({ 
+      ...note, 
+      title: newTitle, 
+      content: newContent, 
+      images: localImages, 
+      isFavourite: updatedFavouriteStatus 
+    });
   };
 
   const handleImageSelect = async (e) => {
@@ -277,7 +289,7 @@ const NoteCardDialog = ({ isOpen, onClose, note, onUpdate }) => {
           </div>
         )}
         {/* Multi-image upload section */}
-        <div className="mt-4">
+        <div className={`mt-4 ${fullScreen ? 'overflow-auto' : ''}`}>
           <div className="grid grid-cols-2 gap-4">
             {savedImages.map((img, idx) => (
               <Card key={`saved-${idx}`} className="relative">

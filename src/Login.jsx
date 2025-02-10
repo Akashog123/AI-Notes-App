@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import './style.css';
 
 const Login = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -11,7 +13,7 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
     // call backend login endpoint
     try {
-      const res = await fetch('/api/auth/login', { // changed URL
+      const res = await fetch('/api/auth/login', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -20,9 +22,10 @@ const Login = ({ setIsAuthenticated }) => {
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
         setIsAuthenticated(true);
+        toast({ title: "Login Successful", description: "Welcome! Back", className: "bg-green-600 text-white border-success" });
         navigate('/dashboard');
       } else {
-        alert(data.error);
+        toast({ title: "Something went wrong", description: "Please try again.", className: "bg-red-600 text-white border-success" });
       }
     } catch (error) {
       console.error(error);
@@ -40,12 +43,12 @@ const Login = ({ setIsAuthenticated }) => {
           <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
         </div>
         <span>or use your email password</span>
-        <input type="text" placeholder="Username" value={username}
+        <input type="text" placeholder="Username" autoComplete="username" value={username}
           onChange={(e) => setUsername(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password}
+        <input type="password" placeholder="Password" autoComplete="current-password" value={password}
           onChange={(e) => setPassword(e.target.value)} required />
         <a href="#">Forget Your Password?</a>
-        <button type="submit">Sign In</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );

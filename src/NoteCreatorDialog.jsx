@@ -132,6 +132,7 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
       setIsPaused(false);
       setisRecorded(true);
       clearInterval(intervalRef.current);
+      setRecordTime(0);
     }
   }, [recording, mediaRecorder, recognition]);
 
@@ -201,6 +202,18 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
         description: "Please enter content for your note.",
       });
       return;
+    }
+
+    // If audio recording is active, finish recording and wait for it to complete before saving.
+    if (recording && mediaRecorder) {
+      await new Promise(resolve => {
+        const originalOnStop = mediaRecorder.onstop;
+        mediaRecorder.onstop = (e) => {
+          if (originalOnStop) originalOnStop(e);
+          resolve();
+        };
+        handleFinishRecording();
+      });
     }
 
     setIsSaving(true);

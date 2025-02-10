@@ -21,8 +21,8 @@ const Auth = ({ setIsAuthenticated }) => {
         <div className="toggle">
           <div className="toggle-panel toggle-left">
             <h1>Hello, User!</h1>
-            <p>Already Registered, Click the below button to Sign In.</p>
-            <button onClick={() => { setActive(false); navigate('/login'); }}>Go to Sign In</button>
+            <p>Already Registered, Click the below button to Login with your details.</p>
+            <button onClick={() => { setActive(false); navigate('/login'); }}>Go to Login</button>
           </div>
           <div className="toggle-panel toggle-right">
             <h1>Welcome Back!</h1>
