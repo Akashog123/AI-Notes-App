@@ -1,4 +1,5 @@
 # AI Notes App
+Note: Browser Web Speech API's SpeechRecognition has [compatibilty](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition#browser_compatibility) issues with browsers which leads to not recording, this app is using live transcription, which works best in Microsoft Edge.
 
 A full-stack note-taking application that incorporates modern features and integrations.
 
@@ -63,5 +64,3 @@ A full-stack note-taking application that incorporates modern features and integ
 - Features speech recognition and live media preview functionalities.
 
 Enjoy using AI Notes App!
-
-Note: Browser Web Speech API's SpeechRecognition has compatibilty issues with some browsers which leads to not recording, this app works best in Microsoft Edge.
