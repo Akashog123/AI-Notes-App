@@ -139,7 +139,8 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
   useEffect(() => {
     if (recordTime >= 60) {
       toast({
-        variant: "destructive",
+        // variant: "destructive",
+        className: "bg-red-600 text-white border-danger",
         title: "Recording Limit Reached",
         description: "Maximum recording time is 1 minute.",
       });
@@ -189,7 +190,8 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
   const handleSubmit = async () => {
     if (!title.trim()) {
       toast({
-        variant: "destructive",
+        // variant: "destructive",
+        className: "bg-red-600 text-white border-danger",
         title: "Title Required",
         description: "Please enter a title for your note.",
       });
@@ -197,7 +199,8 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
     }
     if (!content.trim()) {
       toast({
-        variant: "destructive",
+        // variant: "destructive",
+        className: "bg-red-600 text-white border-danger",
         title: "Content Required",
         description: "Please enter content for your note.",
       });
@@ -249,7 +252,8 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
     } catch (error) {
       console.error('Failed to save note:', error);
       toast({
-        variant: "destructive",
+        // variant: "destructive",
+        className: "bg-red-600 text-white border-danger",
         title: "Saving Failed",
         description: "Failed to save note. Please try again."
       });
@@ -258,9 +262,37 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
     }
   };
 
+  // Function to reset dialog contents when closing without saving
+  const resetDialog = () => {
+    if (recording) {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      if (recognition) {
+        recognition.stop();
+      }
+      clearInterval(intervalRef.current);
+      setRecording(false);
+      setIsPaused(false);
+    }
+    setTitle('');
+    setContent('');
+    setImageFiles([]);
+    setAudioFile(null);
+    setisRecorded(false);
+  };
+
+  // Handler for dialog close
+  const handleDialogClose = (open) => {
+    if (!open) {
+      resetDialog();
+    }
+    onClose && onClose(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[650px] p-6 bg-rose-50 rounded-lg shadow-lg" aria-describedby="modal-description">
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
+      <DialogContent className="p-6 bg-zinc-50 rounded-lg shadow-lg" aria-describedby="modal-description">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-gray-900">Create Note</DialogTitle>
         </DialogHeader>
@@ -278,13 +310,13 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
           className="mb-3 border border-gray-300 p-2 rounded-md bg-gray-100 h-20"
         />
         <div className="flex items-center gap-2 mb-3">
-          <Button onClick={handleRecordToggle} disabled={recordTime >= 60 || isRecorded} hidden={recordTime >= 60 || isRecorded} className="bg-rose-600 hover:bg-rose-800 text-white px-4 py-2 rounded-md">
+          <Button onClick={handleRecordToggle} disabled={recordTime >= 60 || isRecorded} hidden={recordTime >= 60 || isRecorded} className="bg-rose-600 hover:bg-rose-800 text-white px-3 py-1 rounded-md">
             { recording ? (isPaused ? <Play size={16} /> : <Pause size={16} />) : <Mic size={16} />}
             { !recording ? <span>Record</span>: ''}  
           </Button>
-          {recording && <Button onClick={handleFinishRecording}>Finish<CheckCheck size={16} /></Button>}
+          {recording && <Button onClick={handleFinishRecording} className="text-white bg-zinc-700">Finish<CheckCheck size={16} /></Button>}
           <Button onClick={handleSubmit} 
-              className=" absolute right-6 bg-rose-600 hover:bg-rose-800 text-white px-4 py-2 rounded-md" 
+              className=" absolute right-6 bg-rose-600 hover:bg-rose-800 text-white px-3 py-1 rounded-md" 
               disabled={isSaving}
               >
                 {isSaving ? (
@@ -302,7 +334,7 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
         </div>
         {/* Image upload section */}
         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload" multiple />
-        <div className="grid grid-cols-2 gap-2 mt-2">
+        <div className="grid grid-cols-2 gap-4 mt-1">
           {[0, 1].map(index => (
             <Card 
               key={index} 
@@ -319,8 +351,7 @@ const NoteCreatorDialog = ({ isOpen, onClose, onAddNote }) => {
                         className="object-cover w-full h-full" 
                       />
                       <Trash2 
-                        size={16} 
-                        className="absolute top-1 right-1 text-rose-500" 
+                        className="absolute top-1 right-1 h-4 w-4 text-gray-400 fill-gray-400 shadow-sm cursor-pointer" 
                         onClick={(e) => { 
                           e.stopPropagation(); 
                           handleRemoveImage(index); 

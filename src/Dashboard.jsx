@@ -202,25 +202,25 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen">
-      <Toaster className="bg-rose-50" />
+    <div className="flex h-screen bg-[#FEF7FF]">
+      <Toaster/>
       {/* Sidebar */}
       <div className="w-64 bg-[#F7F6FA] p-4 flex flex-col justify-between rounded-lg shadow-lg">
         <div>
           <h1 className="text-xl font-semibold flex items-center space-x-2">
-            <span className="bg-fuchsia-700 hover:bg-fuchsia-800 p-2 rounded-lg text-white flex items-center justify-center w-8 h-8">
+            <span className="bg-purple-700 hover:bg-purple-800 p-2 rounded-lg text-white flex items-center justify-center w-8 h-8">
                ~ 
             </span>
             <span>AI Notes</span>
           </h1>
           <nav className="mt-6">
             <button onClick={() => setShowFavourites(false)}
-              className={`flex items-center space-x-2 p-2 rounded-lg w-full ${!showFavourites ? "bg-rose-100" : ""}`}>
+              className={`flex items-center space-x-2 p-2 rounded-lg w-full ${!showFavourites ? "bg-fuchsia-100" : ""}`}>
               <Home size={18} />
               <span>Home</span>
             </button>
             <button onClick={() => setShowFavourites(true)}
-              className={`flex items-center space-x-2 p-2 mt-2 w-full ${showFavourites ? "bg-rose-100" : ""}`}>
+              className={`flex items-center space-x-2 p-2 mt-2 w-full ${showFavourites ? "bg-fuchsia-100" : ""}`}>
               <Star size={18} />
               <span>Favourites</span>
             </button>
@@ -228,24 +228,25 @@ export default function Dashboard() {
         </div>
         <div className="relative flex items-center justify-between space-x-2 p-2 border-t">
           <div className="flex items-center space-x-2">
+            {/* Avatar placeholder */}
             <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
             <span>{user ? user.username : "User"}</span>
           </div>
             <button onClick={() => handleLogout(navigate)}>
               <LogOut size={20} color="#ff0000" className="cursor-pointer" />
             </button>
-          </div>
+        </div>
       </div>
       
       {/* Main Content */}
       <div className="flex-1 p-6">
 
         {/* Search Bar */}
-        <div className="flex items-center bg-gray-100 px-4 py-2 rounded-lg ">
-          <Search size={18} className="text-gray-500" />
+        <div className="flex items-center bg-zinc-50 text-gray-500 px-4 py-2 rounded-full shadow-sm">
+          <Search size={18} className="bg-zinc-50 text-gray-500" />
           <input
             type="text"
-            className="flex-1 bg-transparent outline-none px-2"
+            className="flex-1 bg-zinc-50 text-gray-500 outline-none appearance-none px-2"
             placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -253,14 +254,14 @@ export default function Dashboard() {
           <Filter 
             size={18} 
             onClick={toggleSortOrder}
-            className="text-gray-500 cursor-pointer" />
+            className="bg-zinc-50 text-gray-500 cursor-pointer" />
         </div>
         
         {/* Notes */}
         <ScrollArea className="mt-6 h-[80vh]">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-5 gap-4">
             {notesToDisplay.map((note) => (
-              <Card key={note._id} className="p-2 bg-rose-50 relative h-40" onClick={()=>handleCardClick(note)}>
+              <Card key={note._id} className="p-2 bg-zinc-50 relative h-40" onClick={()=>handleCardClick(note)}>
                 {/* Icons at bottom left if audio or image available */}
                 <div className="absolute bottom-2 left-2 flex flex-row space-x-2">
                   {note.audio && <Play size={14} className="text-gray-500"/>}
@@ -296,11 +297,11 @@ export default function Dashboard() {
                   </DropdownMenu>
                 </div>
                 <CardContent>
-                  <p className="text-[10px] text-gray-500">{formatDateTime(note.savedAt)}</p>
-                  {/* Updated title with truncation */}
+                  <p className="text-[11px] text-gray-500 truncate">{formatDateTime(note.savedAt)}</p>
+                  {/* Title with truncation */}
                   <h2 className="font-semibold truncate">{note.title}</h2>
-                  {/* Updated content with multi-line truncation */}
-                  <p className="text-xs text-gray-700 line-clamp-5">{note.content}</p>
+                  {/* Content with multi-line */}
+                  <p className="text-[12px] text-gray-700 line-clamp-4 mt-1">{note.content}</p>
                 </CardContent>
                 {/* Copy to clipboard button */}
                 <div className="absolute bottom-1 right-2" onClick={(e)=>e.stopPropagation()}>
@@ -341,7 +342,7 @@ export default function Dashboard() {
       {/* Rename Dialog */}
       {renamingNote && (
         <AlertDialog open={renameDialogOpen} onOpenChange={(open) => { if (!open) handleRenameCancel(); }}>
-          <AlertDialogContent className="bg-rose-50">
+          <AlertDialogContent className="bg-zinc-50">
             <AlertDialogHeader>
               <AlertDialogTitle>Edit Note Title</AlertDialogTitle>
               <AlertDialogDescription>
@@ -369,7 +370,7 @@ export default function Dashboard() {
       {/* Deletion confirmation dialog */}
       {noteToDelete && (
         <AlertDialog open={true} onOpenChange={(open) => { if (!open) setNoteToDelete(null); }}>
-          <AlertDialogContent className="bg-rose-50">
+          <AlertDialogContent className="bg-zinc-50">
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
               <AlertDialogDescription>
